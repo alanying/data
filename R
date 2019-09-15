@@ -1,6 +1,0 @@
-Call a library:
-library (dslabs)
-
-Define varible:
-a <- 1
-

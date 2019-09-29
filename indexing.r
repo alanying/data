@@ -21,3 +21,28 @@ safe <- murder_rate <= 1
 # defining an index and identifying states with both conditions true
 index <- safe & west
 murders$state[index]
+
+
+##################################################################
+Video Correction
+The code at 2:10 should read murders$state[index]
+
+Textbook link
+This video corresponds to the Here is a  textbook section on the indexing functions which, match, and %in%.
+
+Key Points
+The function which() gives us the entries of a logical vector that are true.
+The function match() looks for entries in a vector and returns the index needed to access them.
+We use the function %in% if we want to know whether or not each element of a first vector is in a second vector.
+Code
+# to determine the murder rate in Massachusetts we may do the following
+ind <- which(murders$state == "Massachusetts")
+murder_rate[ind]
+
+# to obtain the indices and subsequent murder rates of New York, Florida, Texas, we do:
+ind <- match(c("New York", "Florida", "Texas"), murders$state)
+ind
+murder_rate[ind]
+
+# to see if Boston, Dakota, and Washington are states
+c("Boston", "Dakota", "Washington") %in% murders$state

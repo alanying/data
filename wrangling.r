@@ -25,3 +25,16 @@ new_table <- select(murders, state, region, rate)
 
 # using the pipe
 murders %>% select(state, region, rate) %>% filter(rate <= 0.71)
+
+#####################################################################
+Data Frame
+#####################################################################
+Key Points
+We can use the data.frame() function to create data frames.
+By default, the data.frame() function turns characters into factors.  To avoid this, we utilize the stringsAsFactors argument and set it equal to false.
+Code
+# creating a data frame with stringAsFactors = FALSE
+grades <- data.frame(names = c("John", "Juan", "Jean", "Yao"), 
+                     exam_1 = c(95, 80, 90, 85), 
+                     exam_2 = c(90, 85, 85, 90),
+                     stringsAsFactors = FALSE)

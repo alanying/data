@@ -58,3 +58,16 @@ heights$height %in% x
 
 #count the index
 sum(!(x %in% heights$height))
+
+#Question 6 - Using the heights dataset, create a new column of heights in centimeters named ht_cm. Recall that 1 inch =
+#2.54 centimeters. Save the resulting dataset as heights2.
+#6a - What is the height in centimeters of the 18th individual (index 18)?
+#add a new vector, a new column to the table, converting inch to cm
+heights2 <- mutate(heights, ht_cm = height * 2.54)
+
+#retrieve the 18th index
+heights2$ht_cm[18]
+
+#Questions 7 - Create a data frame females by filtering the heights2 data to contain only female individuals.
+#How many females are in the heights2 dataset?
+

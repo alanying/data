@@ -70,4 +70,22 @@ heights2$ht_cm[18]
 
 #Questions 7 - Create a data frame females by filtering the heights2 data to contain only female individuals.
 #How many females are in the heights2 dataset?
+#if restarting session, remember to reset the data set data("heights") and launch the library(dplyr)
+women_only <- filter(heights2, sex == "Female")
+women_frame <- data.frame(gender = women_only)
 
+#Question 8 - The olive dataset in dslabs contains composition in percentage of eight fatty acids found in the lipid fraction of 572 Italian olive oils:
+library(dslabs)
+data(olive)
+head(olive)
+#Plot the percent palmitic acid versus palmitoleic acid in a scatterplot. What relationship do you see?
+x <- olive$palmitic
+y <- olive$palmitoleic
+plot(x,y)
+
+#Question 9 - Create a histogram of the percentage of eicosenoic acid in olive.
+hist(olive$eicosenoic)
+
+#Question 10 - Make a boxplot of palmitic acid percentage in olive with separate distributions for each region.
+#Which region has the highest median palmitic acid percentage?
+boxplot(palmitic~region, data = olive)

@@ -1,3 +1,4 @@
+######################################## conditionals ########################################
 Textbook link
 This video corresponds to the textbook section on basic conditional expressions.
 
@@ -50,3 +51,42 @@ sum(is.na(no_nas))
 z <- c(TRUE, TRUE, FALSE)
 any(z)
 all(z)
+
+######################################## functions ########################################
+
+Textbook link
+This video corresponds to the textbook section on Basic Functions.
+
+Key points
+The R function, called function() tells R you are about to define a new function.
+Functions are objects, so must be assigned a variable name with the arrow operator.
+The general way to define functions is: (1) decide the function name, which will be an object, (2) type function() with your function's arguments in parentheses, (3) write all the operations inside brackets.
+Variables defined inside a function are not saved in the workspace.
+Code
+# example of defining a function to compute the average of a vector x
+avg <- function(x){
+  s <- sum(x)
+  n <- length(x)
+  s/n
+}
+
+# we see that the above function and the pre-built R mean() function are identical
+x <- 1:100
+identical(mean(x), avg(x))
+
+# variables inside a function are not defined in the workspace
+s <- 3
+avg(1:10)
+s
+
+# the general form of a function
+my_function <- function(VARIABLE_NAME){
+  perform operations on VARIABLE_NAME and calculate VALUE
+  VALUE
+}
+
+# functions can have multiple arguments as well as default values
+avg <- function(x, arithmetic = TRUE){
+  n <- length(x)
+  ifelse(arithmetic, sum(x)/n, prod(x)^(1/n))
+}

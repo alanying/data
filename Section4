@@ -1,3 +1,4 @@
+#conditionals, functions, for loops
 ######################################## conditionals ########################################
 Textbook link
 This video corresponds to the textbook section on basic conditional expressions.
@@ -90,3 +91,44 @@ avg <- function(x, arithmetic = TRUE){
   n <- length(x)
   ifelse(arithmetic, sum(x)/n, prod(x)^(1/n))
 }
+
+
+######################################## For loops ########################################
+Textbook link
+This video corresponds to the textbook section on for-loops.
+https://rafalab.github.io/dsbook/programming-basics.html#for-loops
+
+Key points
+For-loops perform the same task over and over while changing the variable.  They let us define the range that our variable takes, and then changes the value with each loop and evaluates the expression every time inside the loop.
+The general form of a for-loop is: "For i in [some range], do operations".  This i changes across the range of values and the operations assume i is a value you're interested in computing on.
+At the end of the loop, the value of i is the last value of the range.
+Code
+# creating a function that computes the sum of integers 1 through n
+compute_s_n <- function(n){
+  x <- 1:n
+  sum(x)
+}
+
+# a very simple for-loop
+for(i in 1:5){
+  print(i)
+
+# a for-loop for our summation
+m <- 25
+s_n <- vector(length = m) # create an empty vector
+for(n in 1:m){
+  s_n[n] <- compute_s_n(n)
+}
+
+# creating a plot for our summation function
+n <- 1:m
+plot(n, s_n)
+
+# a table of values comparing our function to the summation formula
+head(data.frame(s_n = s_n, formula = n*(n+1)/2))
+
+# overlaying our function with the summation formula
+plot(n, s_n)
+lines(n, n*(n+1)/2)
+Annotate
+

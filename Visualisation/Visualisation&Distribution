@@ -1,0 +1,61 @@
+##### section 1.1 #####
+##### Key points #####
+Plots of data easily communicate information that is difficult to extract from tables of raw values.
+Data visualization is a key component of exploratory data analysis (EDA), in which the properties of data are explored through visualization and summarization techniques.
+Data visualization can help discover biases, systematic errors, mistakes and other unexpected problems in data before those data are incorporated into potentially flawed analysis.
+This course covers the basics of data visualization and EDA in R using the ggplot2 package and motivating examples from world health, economics and infectious disease.
+
+Key points
+The most basic statistical summary of a list of objects is its distribution.
+In some cases, data can be summarized by a two-number summary: the average and standard deviation. We will learn to use data visualization to determine when that is appropriate.
+
+##### data type #####
+categorical e.g. gender, region
+categorical - ordinal data e.g. spice mild/midium/hot
+
+numerical e.g. population, heights, murder rates
+numerical - continous e.g. heights 68.12
+numerical - discrete e.g. population size as it has to be round number
+
+##### exercise #####
+name(heights)
+return name of the vector of the table heights
+
+unique(heights$height)
+return all unique value of height
+
+length(unique(heights$height))
+return the length of the dataset
+
+table(heighs$height)
+return a table of fequency for each uniqe height
+
+
+##### section 1.2 #####
+##### Intro to Distribution #####
+Textbook links
+This video corresponds to the following sections:
+textbook case study of describing student heights [https://rafalab.github.io/dsbook/distributions.html#case-study-describing-student-heights]
+textbook section on the distribution function [https://rafalab.github.io/dsbook/distributions.html#distribution-function]
+textbook section on the cumulative distribution function [https://rafalab.github.io/dsbook/distributions.html#cdf-intro]
+textbook section on histograms [https://rafalab.github.io/dsbook/distributions.html#histograms]
+
+Key points
+A distribution is a function or description that shows the possible values of a variable and how often those values occur.
+For categorical variables, the distribution describes the proportions of each category.
+A frequency table is the simplest way to show a categorical distribution. Use prop.table to convert a table of counts to a frequency table. Barplots display the distribution of categorical variables and are a way to visualize the information in frequency tables.
+For continuous numerical data, reporting the frequency of each unique entry is not an effective summary as many or most values are unique. Instead, a distribution function is required.
+The cumulative distribution function (CDF) is a function that reports the proportion of data below a value  a  for all values of  a :  F(a)=Pr(x≤a) .
+The proportion of observations between any two values  a  and  b  can be computed from the CDF as  F(b)−F(a) .
+A histogram divides data into non-overlapping bins of the same size and plots the counts of number of values that fall in that interval.
+
+Code
+# load the dataset
+library(dslabs)
+data(heights)
+
+# make a table of category proportions
+prop.table(table(heights$sex))
+
+Creating other graphs from the video
+You will learn to create barplots and histograms in a later section of this course.

@@ -132,3 +132,68 @@ plot(n, s_n)
 lines(n, n*(n+1)/2)
 Annotate
 
+################################## exercise from DataCamp
+# question 1 - 
+# Write a function compute_s_n with argument n that for any given n computes the sum of 1 + 2^2 + ...+ n^2
+compute_s_n <- function(n){
+  s <- 0
+  for(i in 1:n){
+  s <- s + i * i
+  } 
+  sum(s)
+}
+# Report the value of the sum when n=10
+compute_s_n(10)
+
+#Quesiton 2 - 
+# # Define a function and store it in `compute_s_n`
+compute_s_n <- function(n){
+  x <- 1:n
+  sum(x^2)
+}
+# Create a vector for storing results
+s_n <- vector("numeric", 25)
+# write a for-loop to store the results in s_n
+for(i in 1:25){
+  s_n[i] <- compute_s_n(i)
+}
+
+#Question 3 - plot S^n versus n
+# Define the function
+compute_s_n <- function(n){
+  x <- 1:n
+  sum(x^2)
+}
+# Define the vector of n
+n <- 1:25
+# Define the vector to store data
+s_n <- vector("numeric", 25)
+for(i in n){
+  s_n[i] <- compute_s_n(i)
+}
+#  Create the plot 
+plot(n, s_n)
+
+################################ exercise
+#####How many individuals in the heights dataset have a height less than 5 feet?
+#####add a ft vector to heights dataset, and declare it as a new table heights3
+heights3 <- mutate(heights, ft = in_to_ft(heights$height))
+> head(heights3)
+     sex height       ft
+1   Male     75 6.250000
+2   Male     70 5.833333
+3   Male     68 5.666667
+4   Male     74 6.166667
+5   Male     61 5.083333
+6 Female     65 5.416667
+#####use count funciton to solve the question
+> count(heights3, heights3$ft < 5)
+# A tibble: 2 x 2
+  `heights3$ft < 5`     n
+  <lgl>             <int>
+1 FALSE              1030
+2 TRUE                 20
+#####user sum function to solve the question
+> sum(ifelse(heights3$ft < 5, 1, 0))
+[1] 20
+> 

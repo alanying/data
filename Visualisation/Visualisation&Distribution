@@ -59,3 +59,138 @@ prop.table(table(heights$sex))
 
 Creating other graphs from the video
 You will learn to create barplots and histograms in a later section of this course.
+
+
+##### section 1.2 #####
+##### Al's summary:The data are normal when it matches with with what Standard Deviation predicted, like a bell curve
+##### histogram plots has 'count' as y axis; density plots has 'density' as y axis
+##### useful to predict data without the entier list
+
+Textbook link
+For more information, consult this textbook section on the normal distribution. [https://rafalab.github.io/dsbook/distributions.html#normal-distribution]
+
+Key points
+The normal distribution:
+Is centered around one value, the mean
+Is symmetric around the mean
+Is defined completely by its mean ( μ ) and standard deviation (  σ  )
+Always has the same proportion of observations within a given distance of the mean (for example, 95% within 2  σ )
+The standard deviation is the average distance between a value and the mean value.
+Calculate the mean using the mean function.
+Calculate the standard deviation using the sd function or manually. 
+Standard units describe how many standard deviations a value is away from the mean. The z-score, or number of standard deviations an observation  x  is away from the mean  μ :
+Z=x−μσ 
+
+Compute standard units with the scale function.
+Important: to calculate the proportion of values that meet a certain condition, use the mean function on a logical vector. Because TRUE is converted to 1 and FALSE is converted to 0, taking the mean of this vector yields the proportion of TRUE.
+Equation for the normal distribution
+The normal distribution is mathematically defined by the following formula for any mean  μ  and standard deviation  σ :
+
+Pr(a<x<b)=∫ba12π√σe−12(x−μσ)2dx 
+
+Code
+# define x as vector of male heights
+library(tidyverse)
+library(dslabs)
+data(heights)
+index <- heights$sex=="Male"
+x <- heights$height[index]
+# calculate the mean and standard deviation manually
+average <- sum(x)/length(x)
+SD <- sqrt(sum(x - average)^2)/length(x)
+# built-in mean and sd functions - note that the audio and printed values disagree
+average <- mean(x)
+SD <- sd(x)
+c(average = average, SD = SD)
+# calculate standard units
+z <- scale(x)
+# calculate proportion of values within 2 SD of mean
+mean(abs(z) < 2)
+Note about the sd function: The built-in R function sd calculates the standard deviation, but it divides by length(x)-1 instead of length(x). When the length of the list is large, this difference is negligible and you can use the built-in sd function. Otherwise, you should compute  σ  by hand. For this course series, assume that you should use the sd function unless you are told not to do so.
+
+########## exercise 1 Proportions ###########
+What proportion of the data is between 69 and 72 inches (taller than 69 but shorter or equal to 72)? A proportion is between 0 and 1.
+Use the mean function in your code. Remember that you can use mean to compute the proportion of entries of a logical vector that are TRUE.
+
+library(dslabs)
+data(heights)
+x <- heights$height[heights$sex == "Male"]
+
+y <- x>69 & x<=72
+mean(y)
+
+########## exercise 2 Averages and Standard Deviations ###########
+Use the normal approximation to estimate the proportion the proportion of the data that is between 69 and 72 inches.
+Note that you can't use x in your code, only avg and stdev. Also note that R has a function that may prove very helpful here - check out the pnorm function (and remember that you can get help by using ?pnorm).
+Explanation: [https://courses.edx.org/courses/course-v1:HarvardX+PH125.2x+2T2019/courseware/1772ea155e374ad99d45629d5a572854/558d8d460f814d93b7d5bc1c243aef20/?child=first]
+
+library(dslabs)
+data(heights)
+x <- heights$height[heights$sex=="Male"]
+avg <- mean(x)
+stdev <- sd(x)
+
+pnorm(72, avg, stdev) - pnorm(69, avg, stdev)
+[1] 0.3061779
+
+########## Exercise 3. Approximations ##########
+library(dslabs)
+data(heights)
+x <- heights$height[heights$sex == "Male"]
+exact <- mean(x > 79 & x <= 81)
+
+avg <- mean(x)
+stdev <- sd(x)
+approx <- pnorm(81, avg, stdev) - pnorm(79, avg, stdev)
+exact/approx
+
+########## Exercise 4. Seven footers and the NBA ##########
+Using the normal approximation, estimate the proportion of adult men that are taller than 7 feet, referred to as seven footers. Remember that 1 foot equals 12 inches.
+Use the pnorm function. Note that pnorm finds the proportion less than or equal to a given value, but you are asked to find the proportion greater than that value.
+Print out your estimate; don't store it in an object.
+
+# use pnorm to calculate the proportion over 7 feet (7*12 inches)
+pnorm(7*12, 69, 3, lower.tail = FALSE)
+
+
+########## Exercise 5. Estimating the number seven footers ##########
+Now we have an approximation for the proportion, call it p, of men that are 7 feet tall or taller.
+We know that there are about 1 billion men between the ages of 18 and 40 in the world, the age range for the NBA.
+Can we use the normal distribution to estimate how many of these 1 billion men are at least seven feet tall?
+
+Use your answer to the previous exercise to estimate the proportion of men that are seven feet tall or taller in the world and store that value as p.
+Then multiply this value by 1 billion (10^9) round the number of 18-40 year old men who are seven feet tall or taller to the nearest integer with round. (Do not store this value in an object.)
+
+p <- pnorm(7*12, 69, 3, lower.tail = FALSE)
+round(p*(10^9))
+
+########## Exercise 6. How many seven footers are in the NBA? ##########
+There are about 10 National Basketball Association (NBA) players that are 7 feet tall or higher.
+
+Use your answer to exercise 4 to estimate the proportion of men that are seven feet tall or taller in the world and store that value as p.
+Use your answer to the previous exercise (exercise 5) to round the number of 18-40 year old men who are seven feet tall or taller to the nearest integer and store that value as N.
+Then calculate the proportion of the world's 18 to 40 year old seven footers that are in the NBA. (Do not store this value in an object.)
+
+p <- pnorm(7*12, 69, 3, lower.tail = FALSE)
+N <- round(p*(10^9))
+10/N
+
+########## Exercise 7. Lebron James' height ##########
+In the previous exerceise we estimated the proportion of seven footers in the NBA using this simple code:
+
+p <- 1 - pnorm(7*12, 69, 3)
+N <- round(p * 10^9)
+10/N
+Repeat the calculations performed in the previous question for Lebron James' height: 6 feet 8 inches. There are about 150 players, instead of 10, that are at least that tall in the NBA.
+Report the estimated proportion of people at least Lebron's height that are in the NBA.
+
+## Change the solution to previous answer
+p <- 1 - pnorm(6*12+8, 69, 3)
+N <- round(p * 10^9)
+150/N
+
+########## Exercise 8. Interpretation ##########
+In answering the previous questions, we found that it is not at all rare for a seven footer to become an NBA player.
+What would be a fair critique of our calculations?
+
+As seen in exercise 3, the normal approximation tends to underestimate the extreme values. It's possible that there are more seven footers than we predicted.

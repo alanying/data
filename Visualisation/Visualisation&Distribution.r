@@ -194,3 +194,55 @@ In answering the previous questions, we found that it is not at all rare for a s
 What would be a fair critique of our calculations?
 
 As seen in exercise 3, the normal approximation tends to underestimate the extreme values. It's possible that there are more seven footers than we predicted.
+
+########## Section 1.3 Quantiles, Percentiles, and Boxplots ##########
+########## Quantile-Quantile Plots ##########
+
+########## Alan note: mean(x <= 69.5) #q     ##########
+########## 0.515 #p                          ##########
+##########
+                                                                                    
+Textbook link
+This video corresponds to the textbook section on quantile-quantile plots. [https://rafalab.github.io/dsbook/distributions.html#quantile-quantile-plots]
+
+Key points
+Quantile-quantile plots, or QQ-plots, are used to check whether distributions are well-approximated by a normal distribution.
+Given a proportion  p , the quantile  q  is the value such that the proportion of values in the data below  q  is  p .
+In a QQ-plot, the sample quantiles in the observed data are compared to the theoretical quantiles expected from the normal distribution. If the data are well-approximated by the normal distribution, then the points on the QQ-plot will fall near the identity line (sample = theoretical).
+Calculate sample quantiles (observed quantiles) using the quantile function.
+Calculate theoretical quantiles with the qnorm function. qnorm will calculate quantiles for the standard normal distribution ( μ=0,σ=1 ) by default, but it can calculate quantiles for any normal distribution given mean and sd arguments. We will learn more about qnorm in the probability course.
+Note that we will learn alternate ways to make QQ-plots with less code later in the series.
+Code
+# define x and z
+library(tidyverse)
+library(dslabs)
+data(heights)
+index <- heights$sex=="Male"
+x <- heights$height[index]
+z <- scale(x)
+# proportion of data below 69.5
+mean(x <= 69.5)
+# calculate observed and theoretical quantiles
+p <- seq(0.05, 0.95, 0.05)
+observed_quantiles <- quantile(x, p)
+theoretical_quantiles <- qnorm(p, mean = mean(x), sd = sd(x))
+# make QQ-plot
+plot(theoretical_quantiles, observed_quantiles)
+abline(0,1)
+
+# make QQ-plot with scaled values
+observed_quantiles <- quantile(z, p)
+theoretical_quantiles <- qnorm(p) 
+plot(theoretical_quantiles, observed_quantiles)
+abline(0,1)
+
+########## boxplot ##########
+Textbook link
+This video corresponds to the textbook section on boxplots. [https://rafalab.github.io/dsbook/distributions.html#boxplots]
+
+Key points
+When data do not follow a normal distribution and cannot be succinctly summarized by only the mean and standard deviation, an alternative is to report a five-number summary: range (ignoring outliers) and the quartiles (25th, 50th, 75th percentile).
+In a boxplot, the box is defined by the 25th and 75th percentiles and the median is a horizontal line through the box. The whiskers show the range excluding outliers, and outliers are plotted separately as individual points.
+The interquartile range is the distance between the 25th and 75th percentiles.
+Boxplots are particularly useful when comparing multiple distributions.
+We discuss outliers in a later video.

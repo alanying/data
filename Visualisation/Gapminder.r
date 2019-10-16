@@ -82,3 +82,144 @@ gapminder %>%
     ggplot(aes(fertility, life_expectancy, col = continent)) +
     geom_point() +
     facet_wrap(~year)
+
+######### Time Series Plots ##########
+Textbook link
+This video corresponds to the textbook section on time series plots.
+[https://rafalab.github.io/dsbook/gapminder.html#time-series-plots]
+
+Key points
+Time series plots have time on the x-axis and a variable of interest on the y-axis.
+The geom_line geometry connects adjacent data points to form a continuous line. A line plot is appropriate when points are regularly spaced, densely packed and from a single data series.
+ You can plot multiple lines on the same graph. Remember to group or color by a variable so that the lines are plotted independently.
+Labeling is usually preferred over legends. However, legends are easier to make and appear by default. Add a label with geom_text, specifying the coordinates where the label should appear on the graph.
+
+Code: Single time series
+# scatterplot of US fertility by year
+gapminder %>%
+    filter(country == "United States") %>%
+    ggplot(aes(year, fertility)) +
+    geom_point()
+
+# line plot of US fertility by year
+gapminder %>%
+    filter(country == "United States") %>%
+    ggplot(aes(year, fertility)) +
+    geom_line()
+
+Code: Multiple time series
+# line plot fertility time series for two countries- only one line (incorrect)
+countries <- c("South Korea", "Germany")
+gapminder %>% filter(country %in% countries) %>%
+    ggplot(aes(year, fertility)) +
+    geom_line()
+
+# line plot fertility time series for two countries - one line per country
+gapminder %>% filter(country %in% countries) %>%
+    ggplot(aes(year, fertility, group = country)) +
+    geom_line()
+
+# fertility time series for two countries - lines colored by country
+gapminder %>% filter(country %in% countries) %>%
+    ggplot(aes(year, fertility, col = country)) +
+    geom_line()
+
+Code: Adding text labels to a plot
+# life expectancy time series - lines colored by country and labeled, no legend
+labels <- data.frame(country = countries, x = c(1975, 1965), y = c(60, 72))
+gapminder %>% filter(country %in% countries) %>%
+    ggplot(aes(year, life_expectancy, col = country)) +
+    geom_line() +
+    geom_text(data = labels, aes(x, y, label = country), size = 5) +
+    theme(legend.position = "none")
+
+
+########## Transformation ###########
+Textbook link
+This video corresponds to the textbook section on transformations and the textbook section on visualizing multimodal distributions.
+[https://rafalab.github.io/dsbook/gapminder.html#data-transformations]
+[https://rafalab.github.io/dsbook/gapminder.html#visualizing-multimodal-distributions]
+
+Key points
+We use GDP data to compute income in US dollars per day, adjusted for inflation.
+Log transformations convert multiplicative changes into additive changes.
+Common transformations are the log base 2 transformation and the log base 10 transformation. The choice of base depends on the range of the data. The natural log is not recommended for visualization because it is difficult to interpret.
+The mode of a distribution is the value with the highest frequency. The mode of a normal distribution is the average. A distribution can have multiple local modes.
+There are two ways to use log transformations in plots: transform the data before plotting or transform the axes of the plot. Log scales have the advantage of showing the original values as axis labels, while log transformed values ease interpretation of intermediate values between labels.
+Scale the x-axis using scale_x_continuous or scale_x_log10 layers in ggplot2. Similar functions exist for the y-axis.
+In 1970, income distribution is bimodal, consistent with the dichotomous Western versus developing worldview.
+
+Code
+# add dollars per day variable
+gapminder <- gapminder %>%
+    mutate(dollars_per_day = gdp/population/365)
+
+# histogram of dollars per day
+past_year <- 1970
+gapminder %>%
+    filter(year == past_year & !is.na(gdp)) %>%
+    ggplot(aes(dollars_per_day)) +
+    geom_histogram(binwidth = 1, color = "black")
+
+# repeat histogram with log2 scaled data
+gapminder %>%
+    filter(year == past_year & !is.na(gdp)) %>%
+    ggplot(aes(log2(dollars_per_day))) +
+    geom_histogram(binwidth = 1, color = "black")
+
+# repeat histogram with log2 scaled x-axis
+gapminder %>%
+    filter(year == past_year & !is.na(gdp)) %>%
+    ggplot(aes(dollars_per_day)) +
+    geom_histogram(binwidth = 1, color = "black") +
+    scale_x_continuous(trans = "log2")
+
+
+########### Stratify and Boxplot ###########
+Textbook link
+This video corresponds to the textbook section on comparing multiple distributions with boxplots. Note that many boxplots from the video are instead dot plots in the textbook and that a different boxplot is constructed in the textbook. Also read that section to see an example of grouping factors with the case_when function.
+[https://rafalab.github.io/dsbook/gapminder.html#comparing-multiple-distributions-with-boxplots-and-ridge-plots]
+
+Key points
+Make boxplots stratified by a categorical variable using the geom_boxplot geometry.
+Rotate axis labels by changing the theme through element_text. You can change the angle and justification of the text labels.
+Consider ordering your factors by a meaningful value with the reorder function, which changes the order of factor levels based on a related numeric vector. This is a way to ease comparisons.
+Show the data by adding data points to the boxplot with a geom_point layer. This adds information beyond the five-number summary to your plot, but too many data points it can obfuscate your message.
+Code: Boxplot of GDP by region
+# add dollars per day variable
+gapminder <- gapminder %>%
+    mutate(dollars_per_day = gdp/population/365)
+# number of regions
+length(levels(gapminder$region))
+# boxplot of GDP by region in 1970
+past_year <- 1970
+p <- gapminder %>%
+    filter(year == past_year & !is.na(gdp)) %>%
+    ggplot(aes(region, dollars_per_day))
+p + geom_boxplot()
+# rotate names on x-axis
+p + geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+Code: The reorder function
+# by default, factor order is alphabetical
+fac <- factor(c("Asia", "Asia", "West", "West", "West"))
+levels(fac)
+
+# reorder factor by the category means
+value <- c(10, 11, 12, 6, 4)
+fac <- reorder(fac, value, FUN = mean)
+levels(fac)
+Code: Enhanced boxplot ordered by median income, scaled, and showing data
+# reorder by median income and color by continent
+p <- gapminder %>%
+    filter(year == past_year & !is.na(gdp)) %>%
+    mutate(region = reorder(region, dollars_per_day, FUN = median)) %>%    # reorder
+    ggplot(aes(region, dollars_per_day, fill = continent)) +    # color by continent
+    geom_boxplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    xlab("")
+
+# log2 scale y-axis
+p + scale_y_continuous(trans = "log2")
+# add data points
+p + scale_y_continuous(trans = "log2") + geom_point(show.legend = FALSE)

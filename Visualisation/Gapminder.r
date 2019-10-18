@@ -223,3 +223,168 @@ p <- gapminder %>%
 p + scale_y_continuous(trans = "log2")
 # add data points
 p + scale_y_continuous(trans = "log2") + geom_point(show.legend = FALSE)
+
+
+########### comparing distrubition ##########
+Textbook link
+This video corresponds to the textbook section on 1970 versus 2010 income distributions. Note that the boxplots are slightly different: the group variable in those plots was defined in section 10.7.1.
+[https://rafalab.github.io/dsbook/gapminder.html#example-1970-versus-2010-income-distributions]
+
+Key points
+Use intersect to find the overlap between two vectors.
+To make boxplots where grouped variables are adjacaent, color the boxplot by a factor instead of faceting by that factor. This is a way to ease comparisons.
+The data suggest that the income gap between rich and poor countries has narrowed, not expanded.
+Code: Histogram of income in West versus developing world, 1970 and 2010
+# add dollars per day variable and define past year
+gapminder <- gapminder %>%
+    mutate(dollars_per_day = gdp/population/365)
+past_year <- 1970
+# define Western countries
+west <- c("Western Europe", "Northern Europe", "Southern Europe", "Northern America", "Australia and New Zealand")
+
+# facet by West vs devloping
+gapminder %>%
+    filter(year == past_year & !is.na(gdp)) %>%
+    mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+    ggplot(aes(dollars_per_day)) +
+    geom_histogram(binwidth = 1, color = "black") +
+    scale_x_continuous(trans = "log2") +
+    facet_grid(. ~ group)
+# facet by West/developing and year
+present_year <- 2010
+gapminder %>%
+    filter(year %in% c(past_year, present_year) & !is.na(gdp)) %>%
+    mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+    ggplot(aes(dollars_per_day)) +
+    geom_histogram(binwidth = 1, color = "black") +
+    scale_x_continuous(trans = "log2") +
+    facet_grid(year ~ group)
+Code: Income distribution of West versus developing world, only countries with data 
+# define countries that have data available in both years
+country_list_1 <- gapminder %>%
+    filter(year == past_year & !is.na(dollars_per_day)) %>% .$country
+country_list_2 <- gapminder %>%
+    filter(year == present_year & !is.na(dollars_per_day)) %>% .$country
+country_list <- intersect(country_list_1, country_list_2)
+# make histogram including only countries with data available in both years
+gapminder %>%
+    filter(year %in% c(past_year, present_year) & country %in% country_list) %>%    # keep only selected countries
+    mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+    ggplot(aes(dollars_per_day)) +
+    geom_histogram(binwidth = 1, color = "black") +
+    scale_x_continuous(trans = "log2") +
+    facet_grid(year ~ group)
+Code: Boxplots of income in West versus developing world, 1970 and 2010
+p <- gapminder %>%
+    filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+    mutate(region = reorder(region, dollars_per_day, FUN = median)) %>%
+    ggplot() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    xlab("") + scale_y_continuous(trans = "log2")
+p + geom_boxplot(aes(region, dollars_per_day, fill = continent)) +
+    facet_grid(year ~ .)
+# arrange matching boxplots next to each other, colored by year
+p + geom_boxplot(aes(region, dollars_per_day, fill = factor(year)))
+
+
+########## Density Plots ###########
+
+Textbook link
+This video corresponds to the following sections:
+
+The end of the textbook section on 1970 versus 2010 income distributions [https://rafalab.github.io/dsbook/gapminder.html#example-1970-versus-2010-income-distributions]
+Textbook section on accessing computed variables [https://rafalab.github.io/dsbook/gapminder.html#accessing-computed-variables]
+Textbook section on weighted densities [https://rafalab.github.io/dsbook/gapminder.html#weighted-densities]
+
+Key points
+Change the y-axis of density plots to variable counts using ..count.. as the y argument.
+The case_when function defines a factor whose levels are defined by a variety of logical operations to group data.
+Plot stacked density plots using position="stack".
+Define a weight aesthetic mapping to change the relative weights of density plots - for example, this allows weighting of plots by population rather than number of countries.
+Code: Faceted smooth density plots
+# see the code below the previous video for variable definitions
+
+# smooth density plots - area under each curve adds to 1
+gapminder %>%
+    filter(year == past_year & country %in% country_list) %>%
+    mutate(group = ifelse(region %in% west, "West", "Developing")) %>% group_by(group) %>%
+    summarize(n = n()) %>% knitr::kable()
+# smooth density plots - variable counts on y-axis
+p <- gapminder %>%
+    filter(year == past_year & country %in% country_list) %>%
+    mutate(group = ifelse(region %in% west, "West", "Developing")) %>%
+    ggplot(aes(dollars_per_day, y = ..count.., fill = group)) +
+    scale_x_continuous(trans = "log2")
+p + geom_density(alpha = 0.2, bw = 0.75) + facet_grid(year ~ .)
+Code: Add new region groups with case_when
+# add group as a factor, grouping regions
+gapminder <- gapminder %>%
+    mutate(group = case_when(
+        .$region %in% west ~ "West",
+        .$region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+        .$region %in% c("Caribbean", "Central America", "South America") ~ "Latin America",
+        .$continent == "Africa" & .$region != "Northern Africa" ~ "Sub-Saharan Africa",
+        TRUE ~ "Others"))
+# reorder factor levels
+gapminder <- gapminder %>%
+    mutate(group = factor(group, levels = c("Others", "Latin America", "East Asia", "Sub-Saharan Africa", "West")))
+Code: Stacked density plot
+# note you must redefine p with the new gapminder object first
+p <- gapminder %>%
+  filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+    ggplot(aes(dollars_per_day, fill = group)) +
+    scale_x_continuous(trans = "log2")
+# stacked density plot
+p + geom_density(alpha = 0.2, bw = 0.75, position = "stack") +
+    facet_grid(year ~ .)
+Code: Weighted stacked density plot
+# weighted stacked density plot
+gapminder %>%
+    filter(year %in% c(past_year, present_year) & country %in% country_list) %>%
+    group_by(year) %>%
+    mutate(weight = population/sum(population*2)) %>%
+    ungroup() %>%
+    ggplot(aes(dollars_per_day, fill = group, weight = weight)) +
+    scale_x_continuous(trans = "log2") +
+    geom_density(alpha = 0.2, bw = 0.75, position = "stack") + facet_grid(year ~ .)
+
+
+
+########## Ecological Fallacy ############
+Textbook link
+This video corresponds to the textbook section on the ecological fallacy.
+[https://rafalab.github.io/dsbook/gapminder.html#the-ecological-fallacy-and-importance-of-showing-the-data]
+
+Key points
+The breaks argument allows us to set the location of the axis labels and tick marks.
+The logistic or logit transformation is defined as f(p)=log(p/1−p) , or the log of odds. This scale is useful for highlighting differences near 0 or near 1 and converts fold changes into constant increases.
+The ecological fallacy is assuming that conclusions made from the average of a group apply to all members of that group.
+Code
+# define gapminder
+library(tidyverse)
+library(dslabs)
+data(gapminder)
+# add additional cases
+gapminder <- gapminder %>%
+    mutate(group = case_when(
+        .$region %in% west ~ "The West",
+        .$region %in% "Northern Africa" ~ "Northern Africa",
+        .$region %in% c("Eastern Asia", "South-Eastern Asia") ~ "East Asia",
+        .$region == "Southern Asia" ~ "Southern Asia",
+        .$region %in% c("Central America", "South America", "Caribbean") ~ "Latin America",
+        .$continent == "Africa" & .$region != "Northern Africa" ~ "Sub-Saharan Africa",
+        .$region %in% c("Melanesia", "Micronesia", "Polynesia") ~ "Pacific Islands"))
+# define a data frame with group average income and average infant survival rate
+surv_income <- gapminder %>%
+    filter(year %in% present_year & !is.na(gdp) & !is.na(infant_mortality) & !is.na(group)) %>%
+    group_by(group) %>%
+    summarize(income = sum(gdp)/sum(population)/365,
+                        infant_survival_rate = 1 - sum(infant_mortality/1000*population)/sum(population))
+surv_income %>% arrange(income)
+# plot infant survival versus income, with transformed axes
+surv_income %>% ggplot(aes(income, infant_survival_rate, label = group, color = group)) +
+    scale_x_continuous(trans = "log2", limit = c(0.25, 150)) +
+    scale_y_continuous(trans = "logit", limit = c(0.875, .9981),
+                                       breaks = c(.85, .90, .95, .99, .995, .998)) +
+    geom_label(size = 3, show.legend = FALSE) 
+

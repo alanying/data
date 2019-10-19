@@ -388,3 +388,13 @@ surv_income %>% ggplot(aes(income, infant_survival_rate, label = group, color = 
                                        breaks = c(.85, .90, .95, .99, .995, .998)) +
     geom_label(size = 3, show.legend = FALSE) 
 
+
+########### exercise ##########
+########## Exercise 1. Life expectancy vs fertility - part 1 ##########
+The Gapminder Foundation (www.gapminder.org) is a non-profit organization based in Sweden that promotes global development through the use of statistics that can help reduce misconceptions about global development.
+
+Using ggplot and the points layer, create a scatter plot of life expectancy versus fertility for the African continent in 2012.
+Remember that you can use the R console to explore the gapminder dataset to figure out the names of the columns in the dataframe.
+In this exercise we provide parts of code to get you going. You need to fill out what is missing. But note that going forward, in the next exercises, you will be required to write most of the code.
+
+

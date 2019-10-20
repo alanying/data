@@ -397,4 +397,118 @@ Using ggplot and the points layer, create a scatter plot of life expectancy vers
 Remember that you can use the R console to explore the gapminder dataset to figure out the names of the columns in the dataframe.
 In this exercise we provide parts of code to get you going. You need to fill out what is missing. But note that going forward, in the next exercises, you will be required to write most of the code.
 
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+## fill out the missing parts in filter and aes
+gapminder %>% filter(continent == "Africa" & year == "2012") %>%
+  ggplot(aes(fertility, life_expectancy)) +
+  geom_point()
+
+########## Exercise 2. Life expectancy vs fertility - part 2 - coloring your plot ##########
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+gapminder %>% filter(continent=="Africa", year=="2012") %>%
+  ggplot(aes(fertility, life_expectancy, color=region)) +
+  geom_point()
+  
+######### Exercise 3. Life expectancy vs fertility - part 3 - selecting country and region ##########
+library(dplyr)
+library(dslabs)
+data(gapminder)
+ex3 <- gapminder %>% filter(continent=="Africa", year==2012, fertility<=3, life_expectancy>=70) 
+df <- data.frame(select(ex3, country, region)) 
+
+########## Exercise 4. Life expectancy and the Vietnam War - part 1 ##########
+The Vietnam War lasted from 1955 to 1975. Do the data support war having a negative effect on life expectancy? We will create a time series plot that covers the period from 1960 to 2010 of life expectancy for Vietnam and the United States, using color to distinguish the two countries. In this start we start the analysis by generating a table.
+
+library(dplyr)
+library(dslabs)
+data(gapminder)
+tab <- gapminder %>% filter(between(year, 1960, 2010), country=="Vietnam" | country=="United States")
+
+#########  Exercise 5. Life expectancy and the Vietnam War - part 2 ##########
+Now that you have created the data table in Exercise 4, it is time to plot the data for the two countries.
+
+# code for your plot goes here - the data table is stored as `tab`
+p <- tab %>% 
+  ggplot(aes(year, life_expectancy, color=country)) +
+  geom_line()
+
+########## Exercise 6. Life expectancy in Cambodia #########
+Cambodia was also involved in this conflict and, after the war, Pol Pot and his communist Khmer Rouge took control and ruled Cambodia from 1975 to 1979. He is considered one of the most brutal dictators in history. Do the data support this claim?
+
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+
+#Use a single line of code to create a time series plot from 1960 to 2010 of life expectancy vs year for Cambodia.
+gapminder %>% 
+    filter(between(year, 1960, 2010), country=="Cambodia") %>% 
+    ggplot(aes(year, life_expectancy)) + 
+    geom_line()
+
+########## Exercise 7. Dollars per day - part 1 ############
+Now we are going to calculate and plot dollars per day for African countries in 2010 using GDP data.
+In the first part of this analysis, we will create the dollars per day variable.
+
+library(dplyr)
+library(dslabs)
+data(gapminder)
+daydollars <- gapminder %>% mutate(dollars_per_day = gdp/population/365) %>% filter(continent=="Africa" & year=="2010" & !is.na(dollars_per_day))
+
+########## Exercise 8. Dollars per day - part 2 ##########
+Now we are going to calculate and plot dollars per day for African countries in 2010 using GDP data.
+In the second part of this analysis, we will plot the smooth density plot using a log (base 2) x axis.
+
+daydollars %>% 
+    ggplot(aes(dollars_per_day)) + 
+    geom_density() +
+    scale_x_continuous(trans = "log2")
+
+########## Exercise 9. Dollars per day - part 3 - multiple density plots ##########
+Now we are going to combine the plotting tools we have used in the past two exercises to create density plots for multiple years.
+
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+
+daydollars <- gapminder %>% 
+  mutate(dollars_per_day = gdp/population/365) %>% 
+  filter(continent=="Africa" & year %in% c(1970, 2010) & !is.na(dollars_per_day))
+
+daydollars %>% 
+    ggplot(aes(dollars_per_day, y=..count..)) + 
+    geom_density() +
+    facet_grid(year ~ .)
+    scale_x_continuous(trans = "log2")
+
+########### Exercise 10. Dollars per day - part 4 - stacked density plot ###########
+Now we are going to edit the code from Exercise 9 to show a stacked density plot of each region in Africa.
+
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+
+daydollars <- gapminder %>% 
+  mutate(dollars_per_day = gdp/population/365) %>% 
+  filter(continent=="Africa" & year %in% c(1970, 2010) & !is.na(dollars_per_day))
+
+daydollars %>% 
+    ggplot(aes(dollars_per_day, y=..count.., fill = region)) + 
+    scale_x_continuous(trans = "log2") +
+    geom_density(bw = 0.5, position = "stack") +
+    facet_grid(year ~ .)
+
+
+
+
+
+
 

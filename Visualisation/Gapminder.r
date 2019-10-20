@@ -506,9 +506,59 @@ daydollars %>%
     geom_density(bw = 0.5, position = "stack") +
     facet_grid(year ~ .)
 
+########## Exercise 11. Infant mortality scatter plot - part 1 ###########
+We are going to continue looking at patterns in the gapminder dataset by plotting infant mortality rates versus dollars per day for African countries.
 
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+gapminder_Africa_2010 <- gapminder %>% 
+    mutate(dollars_per_day = gdp/population/365) %>% 
+    filter(year=="2010" & continent=="Africa" & !is.na(dollars_per_day))
 
+# now make the scatter plot
+gapminder_Africa_2010 %>% 
+  ggplot(aes(dollars_per_day, infant_mortality, color=region)) +
+  geom_point()
 
+########### Exercise 12. Infant mortality scatter plot - part 2 - logarithmic axis ############
+transform the x axis of the plot from the previous exercise.
+
+gapminder_Africa_2010 %>% # your plotting code here
+  ggplot(aes(dollars_per_day, infant_mortality, color=region)) +
+  geom_point() +
+  scale_x_continuous(trans = "log2")
+
+########## Exercise 13. Infant mortality scatter plot - part 3 - adding labels ###########
+Note that there is a large variation in infant mortality and dollars per day among African countries.
+As an example, one country has infant mortality rates of less than 20 per 1000 and dollars per day of 16, while another country has infant mortality rates over 10% and dollars per day of about 1.
+In this exercise, we will remake the plot from Exercise 12 with country names instead of points so we can identify which countries are which.
+
+gapminder_Africa_2010 %>% # your plotting code here
+  ggplot(aes(dollars_per_day, infant_mortality, color=region, label=country)) +
+  scale_x_continuous(trans = "log2") +
+  geom_text()
+
+########## Exercise 14. Infant mortality scatter plot - part 4 - comparison of scatter plots ##########
+Now we are going to look at changes in the infant mortality and dollars per day patterns African countries between 1970 and 2010.
+
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+data(gapminder)
+
+ex14 <- gapminder %>%
+  mutate(dollars_per_day = gdp/population/365) %>%
+  filter(year %in% c(1970,2010) & continent=="Africa") %>%
+  na.omit(ex14) #remove all na, technically same as the line below
+  #na.omit(ex14, cols=c("dollars_per_day","infant_mortality"))
+
+ex14 %>% 
+  ggplot(aes(dollars_per_day, infant_mortality, color=region, label=country)) +
+  scale_x_continuous(trans = "log2") +
+  geom_text() +
+  facet_grid(year~.)
 
 
 

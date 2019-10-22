@@ -174,3 +174,53 @@ murders %>% mutate(rate = total/population*100000, region = reorder(region, rate
 ############################## Part 3 ##############################
 ####################################################################
 
+########## Slope Charts ##########
+Textbook link
+This video corresponds to the textbook section on plots for two variables.
+[https://rafalab.github.io/dsbook/data-visualization-principles.html#plots-for-two-variables]
+
+Key points
+Bland-Altman plot - Consider using a slope chart or Bland-Altman plot when comparing one variable at two different time points, especially for a small number of observations.
+Slope charts - use angle to encode change. Use geom_line to create slope charts. It is useful when comparing a small number of observations.
+The Bland-Altman plot (Tukey mean difference plot, MA plot) graphs the difference between conditions on the y-axis and the mean between conditions on the x-axis. It is more appropriate for large numbers of observations than slope charts.
+
+Code: Slope chart
+library(tidyverse)
+library(dslabs)
+data(gapminder)
+west <- c("Western Europe", "Northern Europe", "Southern Europe", "Northern America", "Australia and New Zealand")
+dat <- gapminder %>%
+    filter(year %in% c(2010, 2015) & region %in% west & !is.na(life_expectancy) & population > 10^7)
+dat %>%
+    mutate(location = ifelse(year == 2010, 1, 2),
+                 location = ifelse(year == 2015 & country %in% c("United Kingdom", "Portugal"), location + 0.22, location),
+                 hjust = ifelse(year == 2010, 1, 0)) %>%
+    mutate(year = as.factor(year)) %>%
+    ggplot(aes(year, life_expectancy, group = country)) +
+    geom_line(aes(color = country), show.legend = FALSE) +
+    geom_text(aes(x = location, label = country, hjust = hjust), show.legend = FALSE) +
+    xlab("") +
+    ylab("Life Expectancy") 
+Code: Bland-Altman plot
+library(ggrepel)
+dat %>%
+    mutate(year = paste0("life_expectancy_", year)) %>%
+    select(country, year, life_expectancy) %>% spread(year, life_expectancy) %>%
+    mutate(average = (life_expectancy_2015 + life_expectancy_2010)/2,
+                difference = life_expectancy_2015 - life_expectancy_2010) %>%
+    ggplot(aes(average, difference, label = country)) +
+    geom_point() +
+    geom_text_repel() +
+    geom_abline(lty = 2) +
+    xlab("Average of 2010 and 2015") +
+    ylab("Difference between 2015 and 2010")
+
+########## Encoding a third variable ##########
+Textbook link
+This video corresponds to the textbook section on encoding a third variable.
+[https://rafalab.github.io/dsbook/data-visualization-principles.html#encoding-a-third-variable]
+
+Key points
+Encode a categorical third variable on a scatterplot using color hue or shape. Use the shape argument to control shape.
+Encode a continuous third variable on a using color intensity or size.
+

@@ -358,3 +358,54 @@ dat %>% ggplot() +
   geom_vline(xintercept=1963, col = "blue")
   
 
+########## Exercise 3: Time series plot - all diseases in California ##########
+For the state of California, make a time series plot showing rates for all diseases.
+Include only years with 10 or more weeks reporting.
+Use a different color for each disease.
+Include your aes function inside of ggplot rather than inside your geom layer.
+
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+library(RColorBrewer)
+data(us_contagious_diseases)
+
+us_contagious_diseases %>% filter(state=="California" & weeks_reporting>=10) %>% 
+  group_by(year, disease) %>%
+  summarize(rate = sum(count)/sum(population)*10000) %>%
+  ggplot(aes(year, rate, color=disease)) + 
+  geom_line()
+  
+
+########## Exercise 4: Time series plot - all diseases in the United States ##########
+Compute the US rate by using summarize to sum over states. Call the variable rate.
+  The US rate for each disease will be the total number of cases divided by the total population.
+  Remember to convert to cases per 10,000.
+You will need to filter for !is.na(population) to get all the data.
+Plot each disease in a different color.
+
+library(dplyr)
+library(ggplot2)
+library(dslabs)
+library(RColorBrewer)
+data(us_contagious_diseases)
+
+#count(us_contagious_diseases)
+#head(us_contagious_diseases)
+ 
+ us_contagious_diseases %>% 
+  group_by(year, disease) %>%
+  filter(!is.na(population)) %>%
+  summarise(rate = sum(count)/sum(population)*10000) %>%
+  ggplot(aes(year, rate, color=disease)) +
+  geom_line()
+
+
+
+
+
+
+
+
+
+

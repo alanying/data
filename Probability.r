@@ -4,6 +4,10 @@
 #Monte Carlo simulation, expected values, standard errors, margin of errors,
 #and the central limit theorem.
 
+###########################################
+# 1.1 Introduction to Discrete Probabilty #
+###########################################
+
 #discrete probability
 #create an urn with 2 red and 3 blue beads
 beads <- rep(c("red", "blue"), times = c(2,3)) 
@@ -54,7 +58,37 @@ mean(beads == "blue")
 
 #conditional probability - the probabilities change once you see the other outcomes
 #e.g. blackjack after seeing 1 King, the chance of getting a King changes
-# Pr(Card 2 is a king∣Card 1 is a king)=3/51
+# Probability of Card2 is a King GIVEN THAT Card1 is a King?
+# Pr(Card 2 is a king ∣ Card 1 is a king)=3/51
 
-# If two events  A  and  B  are independent,  Pr(A∣B)=Pr(A) 
+# If two events  A  and  B  are independent,  Pr(A∣B)=Pr(A) because it doesn't matter what B is, probability of A doesn't change.
+
+#Multiplication Rule - find the probablity of 2 events. 
+#Probability of A multiplie by probability of B given A has already happened.
+# Pr(A and B) = Pr(A)Pr(B|A)
+
+#Black jack as example - we want an Ace and then a face card or a 10 to hit 21 points.
+# Probability of Ace = 1/13
+# Probability of face card or 10 = 16/51 
+#[16 because...10,J,Q,K x 4] [51 because...one card, Ace is alredy shown]
+# 1/13 * 16/51 = 0.02
+
+#Multiplication rule - use induction to extend beyond 2 events
+# Pr(A and B and C) = Pr(A) * Pr(B | A) * Pr(C | A and B)
+
+#Multiplication rule - simpler with independent events
+# Pr(A and B and C) = Pr(A) * Pr(B) * Pr(C)
+
+#Hence, in real cases, assumption of independence would cause huge differencein probability
+
+Equations:
+The multiplication rule for independent events is:
+Pr(A and B and C)=Pr(A)×Pr(B)×Pr(C) 
+
+The multiplication rule for dependent events considers the conditional probability of both events occurring:
+Pr(A and B)=Pr(A)×Pr(B∣A) 
+
+We can expand the multiplication rule for dependent events to more than 2 events:
+Pr(A and B and C)=Pr(A)×Pr(B∣A)×Pr(C∣A and B)
+
 

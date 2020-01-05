@@ -91,4 +91,43 @@ Pr(A and B)=Pr(A)×Pr(B∣A)
 We can expand the multiplication rule for dependent events to more than 2 events:
 Pr(A and B and C)=Pr(A)×Pr(B∣A)×Pr(C∣A and B)
 
+#####################
+# DataCamp exercise #
+#####################
+
+# Exercise 1. Probability of cyan - generalized
+cyan <- 3
+magenta <- 5
+yellow <- 7
+# Assign a variable `p` as the probability of choosing a cyan ball from the box
+p <- cyan/(cyan+magenta+yellow)
+# Print the variable `p` to the console
+p
+
+# Exercise 2. Probability of not cyan - generalized
+# `p` is defined as the probability of choosing a cyan ball from a box containing: 3 cyan balls, 5 magenta balls, and 7 yellow balls.
+# Using variable `p`, calculate the probability of choosing any ball that is not cyan from the box
+1 - p
+
+# Exercise 3. Sampling without replacement - generalized
+cyan <- 3
+magenta <- 5
+yellow <- 7
+# The variable `p_1` is the probability of choosing a cyan ball from the box on the first draw.
+p_1 <- cyan / (cyan + magenta + yellow)
+# Assign a variable `p_2` as the probability of not choosing a cyan ball on the second draw without replacement.
+p_2 <- (magenta + yellow)/((cyan-1) + magenta + yellow)
+# Calculate the probability that the first draw is cyan and the second draw is not cyan using `p_1` and `p_2`.
+p_2 * p_1
+
+#Exercise 4. Sampling with replacement - generalized
+cyan <- 3
+magenta <- 5
+yellow <- 7
+# The variable 'p_1' is the probability of choosing a cyan ball from the box on the first draw.
+p_1 <- cyan / (cyan + magenta + yellow)
+# Assign a variable 'p_2' as the probability of not choosing a cyan ball on the second draw with replacement.
+p_2 <- (magenta + yellow) / (cyan + magenta + yellow)
+# Calculate the probability that the first draw is cyan and the second draw is not cyan using `p_1` and `p_2`.
+p_1 * p_2
 

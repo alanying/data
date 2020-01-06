@@ -131,3 +131,99 @@ p_2 <- (magenta + yellow) / (cyan + magenta + yellow)
 # Calculate the probability that the first draw is cyan and the second draw is not cyan using `p_1` and `p_2`.
 p_1 * p_2
 
+
+###########################################
+# 1.2 Combinations and Permutations       #
+###########################################
+Textbook link
+
+Here is a link to the textbook section on combinations and permutations.
+[https://rafalab.github.io/dsbook/probability.html#combinations-and-permutations]
+
+Key points:
+paste joins two strings and inserts a space in between.
+expand.grid gives the combinations of 2 vectors or lists.
+permutations(n,r) from the gtools package lists the different ways that r items can be selected from a set of n options when order matters.
+combinations(n,r) from the gtools package lists the different ways that r items can be selected from a set of n options when order does not matter.
+Code: Introducing paste and expand.grid
+
+# joining strings with paste
+number <- "Three"
+suit <- "Hearts"
+paste(number, suit)
+
+# joining vectors element-wise with paste
+paste(letters[1:5], as.character(1:5))
+
+# generating combinations of 2 vectors with expand.grid
+expand.grid(pants = c("blue", "black"), shirt = c("white", "grey", "plaid"))
+
+Code: Generating a deck of cards
+
+suits <- c("Diamonds", "Clubs", "Hearts", "Spades")
+numbers <- c("Ace", "Deuce", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King")
+deck <- expand.grid(number = numbers, suit = suits)
+deck <- paste(deck$number, deck$suit)   # paste them together so we can pick each of them as an individual
+
+# probability of drawing a king
+kings <- paste("King", suits)
+mean(deck %in% kings)     # mean gives us the average of when kings happens, thus the probablity
+
+Code: Permutations and combinations
+
+library(gtools)
+permutations(5,2)    # ways to choose 2 numbers in order from 1:5
+# Notice that the order matters. So 3, 1 is different than 1, 3, So it appears in our permutations. Also notice that 1, 1; 2, 2; and 3, 3 don't appear, because once we pick a number, it can't appear again.  
+
+all_phone_numbers <- permutations(10, 7, v = 0:9)   # added a vector that only picks up 0-9, isntead of 1-10
+n <- nrow(all_phone_numbers)
+index <- sample(n, 5)
+all_phone_numbers[index,]
+
+permutations(3,2)    # order matters
+combinations(3,2)    # order does not matter
+
+Code: Probability of drawing a second king given that one king is drawn
+
+hands <- permutations(52,2, v = deck)   # all possible ways to draw 2 cards from ther deck
+first_card <- hands[,1]     # grab first column, first card
+second_card <- hands[,2]    # grab second column, second card
+sum(first_card %in% kings)  # 204, but what fraction of these 204 have also a kind on second card?
+ 
+sum(first_card %in% kings & second_card %in% kings) / sum(first_card %in% kings)  #3 out 3 of 51
+# using Sum is equivalent to Mean, will get the same answer
+# this is R version of the mutliplication rule    Pr(B|A) = Pr(A&B)/Pr(A)
+
+Code: Probability of a natural 21 in blackjack
+
+aces <- paste("Ace", suits)
+
+facecard <- c("King", "Queen", "Jack", "Ten")
+facecard <- expand.grid(number = facecard, suit = suits)
+facecard <- paste(facecard$number, facecard$suit)
+
+hands <- combinations(52, 2, v=deck) # all possible hands
+
+# probability of a natural 21 given that the ace is listed first in `combinations`
+mean(hands[,1] %in% aces & hands[,2] %in% facecard)
+
+# probability of a natural 21 checking for both ace first and ace second
+mean((hands[,1] %in% aces & hands[,2] %in% facecard)|(hands[,2] %in% aces & hands[,1] %in% facecard))
+ 
+# both above get same answer due to the way Combination works, that orders don't matter and counts will not be repeated.
+
+Code: Monte Carlo simulation of natural 21 in blackjack
+
+Note that your exact values will differ because the process is random and the seed is not set.
+
+# code for one hand of blackjack
+hand <- sample(deck, 2)
+hand
+
+# code for B=10,000 hands of blackjack
+B <- 10000
+results <- replicate(B, {
+  hand <- sample(deck, 2)
+  (hand[1] %in% aces & hand[2] %in% facecard) | (hand[2] %in% aces & hand[1] %in% facecard)
+})
+mean(results)

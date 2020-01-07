@@ -227,3 +227,147 @@ results <- replicate(B, {
   (hand[1] %in% aces & hand[2] %in% facecard) | (hand[2] %in% aces & hand[1] %in% facecard)
 })
 mean(results)
+
+
+# The birthday problem
+Here is a link to the textbook section on the birthday problem.
+[https://rafalab.github.io/dsbook/probability.html#birthday-problem]
+
+Key points
+
+duplicated takes a vector and returns a vector of the same length with TRUE for any elements that have appeared previously in that vector.
+We can compute the probability of shared birthdays in a group of people by modeling birthdays as random draws from the numbers 1 through 365. We can then use this sampling model of birthdays to run a Monte Carlo simulation to estimate the probability of shared birthdays.
+Code: The birthday problem
+
+# checking for duplicated bdays in one 50 person group
+n <- 50
+bdays <- sample(1:365, n, replace = TRUE)    # generate n random birthdays, 50 times, with replacement
+any(duplicated(bdays))    # check if any birthdays are duplicated
+
+# Monte Carlo simulation with B=10000 replicates
+B <- 10000
+results <- replicate(B, {    # returns vector of B logical values i.e. repeat simulation B number of times
+    bdays <- sample(1:365, n, replace = TRUE)
+    any(duplicated(bdays))
+})
+mean(results)    # calculates proportion of groups with duplicated bdays
+ 
+
+## sapply
+extbook links
+The textbook discussion of the basics of sapply can be found in this textbook section.
+[https://rafalab.github.io/dsbook/programming-basics.html#vectorization]
+The textbook discussion of sapply for the birthday problem can be found within the birthday problem section.
+[https://rafalab.github.io/dsbook/probability.html#birthday-problem]
+ 
+Key points:
+Some functions automatically apply element-wise to vectors, such as sqrt and *.
+However, other functions do not operate element-wise by default. This includes functions we define ourselves.
+The function sapply(x, f) allows any other function f to be applied element-wise to the vector x.
+
+The probability of an event happening is 1 minus the probability of that event not happening:
+ 
+          Pr(event)=1−Pr(no event) 
+ 
+We can compute the probability of shared birthdays mathematically:
+
+       Pr(shared birthdays) = 1−Pr(no shared birthdays) = 1−(1 × 364/365 × 363/365 ×...× 365−n+1/365) 
+ 
+Code: Function for calculating birthday problem Monte Carlo simulations for any value of n
+
+Note that the function body of compute_prob is the code that we wrote in the previous video. If we write this code as a function, we can use sapply to apply this function to several values of n.
+
+
+# function to calculate probability of shared bdays across n people
+compute_prob <- function(n, B = 10000) {
+    same_day <- replicate(B, {
+        bdays <- sample(1:365, n, replace = TRUE)
+        any(duplicated(bdays))
+    })
+    mean(same_day)
+}
+
+n <- seq(1, 60)
+
+#we can use for loop, but for loop is rare in R. Operate on vectors in element fashion. For example...
+x <- 1:10  # X is now the vector starting at 1 and ending at 10,
+sqrt(x)  # we compute the square root of x, it actually computes the square root for each element.
+y <- 1:10  # Equally, if we define y to be 1 through 10, 
+x*y  # and then multiply x by y, it mutiple each element 1 by 1. So no need for loop.
+  
+Code: Element-wise operation over vectors and sapply
+
+x <- 1:10
+sqrt(x)    # sqrt operates on each element of the vector
+
+y <- 1:10
+x*y    # * operates element-wise on both vectors
+
+compute_prob(n)    # does not iterate over the vector n without sapply
+
+x <- 1:10
+sapply(x, sqrt)    # this is equivalent to sqrt(x)
+
+prob <- sapply(n, compute_prob)    # element-wise application of compute_prob to n
+plot(n, prob)
+
+Computing birthday problem probabilities with sapply
+# simpler maths to compute of it NOT happening i.e. probability of who has unique birthday. 
+ # So the probability for the 1st person to have unique birthday is 1.
+# function for computing exact probability of shared birthdays for any n
+exact_prob <- function(n){
+    prob_unique <- seq(365, 365-n+1)/365   # vector of fractions for mult. rule. 365-n+1 means the index of your turn minus 1. e.g. Pr(3rd person has unique bday | 1st & 2nd have unique bdays) = 363/365
+    1 - prod(prob_unique)    # calculate prob of no shared birthdays and subtract from 1
+}
+
+# applying function element-wise to vector of n values
+eprob <- sapply(n, exact_prob)
+
+# plotting Monte Carlo results and exact probabilities on same graph
+plot(n, prob)    # plot Monte Carlo results
+lines(n, eprob, col = "red")    # add line for exact prob
+ 
+
+## How many Monte Carlo experiments are enough? 
+Textbook link:
+Here is a link to the matching textbook section.
+ [https://rafalab.github.io/dsbook/probability.html#infinity-in-practice]
+
+Key points
+
+The larger the number of Monte Carlo replicates  B , the more accurate the estimate.
+Determining the appropriate size for  B  can require advanced statistics.
+One practical approach is to try many sizes for  B  and look for sizes that provide stable estimates.
+# it means we wopn't know how many times is enough, really. However, we can usetheoretical statstic to see the stability of estimate.
+  
+Code: Estimating a practical value of B
+
+This code runs Monte Carlo simulations to estimate the probability of shared birthdays using several B values and plots the results. When B is large enough that the estimated probability stays stable, then we have selected a useful value of B. 
+
+B <- 10^seq(1, 5, len = 100)    # defines vector of many B values e.g. 10,20,40,100,etc.
+compute_prob <- function(B, n = 22){    # function to run Monte Carlo simulation with each B
+    same_day <- replicate(B, {
+        bdays <- sample(1:365, n, replace = TRUE)
+        any(duplicated(bdays))
+    })
+    mean(same_day)
+}
+prob <- sapply(B, compute_prob)    # apply compute_prob to many values of B
+plot(log10(B), prob, type = "l")    # plot a line graph of estimates  
+# the graph starts to stablise towards right side indicates when we have stabler estimates.
+  
+ 
+# datacamp exercise
+# Exercise 2. Sampling with replacement
+cyan <- 3
+magenta <- 5
+yellow <- 7
+
+# Assign the variable 'p_yellow' as the probability that a yellow ball is drawn from the box.
+p_yellow <- yellow/(cyan+magenta+yellow)
+# Using the variable 'p_yellow', calculate the probability of drawing a yellow ball on the sixth draw. Print this value to the console.
+num_draw <- 1:6
+p_yellow*num_draw
+  
+ 
+# Exercise 3. Rolling a die

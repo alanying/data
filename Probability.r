@@ -136,7 +136,6 @@ p_1 * p_2
 # 1.2 Combinations and Permutations       #
 ###########################################
 Textbook link
-
 Here is a link to the textbook section on combinations and permutations.
 [https://rafalab.github.io/dsbook/probability.html#combinations-and-permutations]
 
@@ -416,3 +415,25 @@ celtic_wins <- replicate(B, {
 mean(celtic_wins)
   
  
+##########################################
+# 1.3 Addition Rule and Monty Hall       #
+##########################################
+Textbook link
+Here is a link to the textbook section on the addition rule.
+[https://rafalab.github.io/dsbook/probability.html#addition-rule]
+ 
+Clarification
+By "facecard", the professor means a card with a value of 10 (K, Q, J, 10).
+
+Key points:
+The addition rule states that the probability of event  A  or event  B  happening is the probability of event  A  plus the probability of event  B  minus the probability of both events  A  and  B  happening together.
+     Pr(A or B)=Pr(A)+Pr(B)−Pr(A and B)   # think of venn diagram, the middle overlay area means we've counted them twice
+Note that  (A or B)  is equivalent to  (A|B) .
+ 
+Example: The addition rule for a natural 21 in blackjack
+ 
+We apply the addition rule where  A  = drawing an ace then a facecard and  B  = drawing a facecard then an ace. Note that in this case, both events A and B cannot happen at the same time, so  Pr(A and B)=0 .
+
+Pr(ace then facecard) = 4/52 × 16/51 
+Pr(facecard then ace) = 16/52 × 4/51 
+Pr(ace then facecard | facecard then ace) = (4/52 × 16/51) + (16/52 × 4/51) = 0.0483  

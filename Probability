@@ -1115,3 +1115,89 @@ b <- -1 #lose 1 dollar
 abs(sqrt(n) * (b-a) * sqrt(p_green*p_not_green))
 
 
+#############################################
+## 3.2 The Central Limit Theorem Continued ##
+#############################################
+
+## Averages and Proportions
+Textbook link
+This video corresponds to the textbook section on the statistical properties of averages.
+[https://rafalab.github.io/dsbook/random-variables.html#statistical-properties-of-averages]
+
+Key points
+Random variable times a constant
+  The expected value of a random variable multiplied by a constant is that constant times its original expected value:
+     E[aX]=aμ 
+  The standard error of a random variable multiplied by a constant is that constant times its original standard error:
+     SE[aX]=aσ 
+
+Average of multiple draws of a random variable
+  The expected value of average of multiple draws from an urn is the expected value of the urn ( μ ).
+  The standard deviation of the average of multiple draws from an urn is the standard deviation of the urn divided by the square root of the number of draws ( σ/√n−− ).
+
+The sum of multiple draws of a random variable
+  The expected value of the sum of  n  draws of random variable is  n  times its original expected value:
+     E[nX]=nμ 
+  The standard error of the sum of  n  draws of random variable is  √n−−  times its original standard error:
+     SE[nX]=√nσ−− 
+
+The sum of multiple different random variables
+  The expected value of the sum of different random variables is the sum of the individual expected values for each random variable:
+     E[X1+X2+⋯+Xn]=μ1+μ2+⋯+μn 
+  The standard error of the sum of different random variables is the square root of the sum of squares of the individual standard errors:
+     SE[X1+X2+⋯+Xn]=√σ2,1 + σ2,2+⋯+σ2,n−−−−−−−−−−−−−−− 
+
+Transformation of random variables
+  If  X  is a normally distributed random variable and  a  and  b  are non-random constants, then  aX+b  is also a normally distributed random variable.
+
+
+
+## Law of Large Numbers
+Textbook link
+This video corresponds to the textbook section on the law of large numbers.[https://rafalab.github.io/dsbook/random-variables.html#law-of-large-numbers]
+
+Key points
+The law of large numbers states that as  n  increases, the standard error of the average of a random variable decreases. In other words, when  n  is large, the average of the draws converges to the average of the urn.
+The law of large numbers is also known as the law of averages.
+The law of averages only applies when  n  is very large and events are independent. It is often misused to make predictions about an event being "due" because it has happened less frequently than expected in a small sample size.
+
+
+## How Large is Large in CLT?
+Textbook links and further information
+This video corresponds to the textbook section on sample size for CLT..
+[https://rafalab.github.io/dsbook/random-variables.html#how-large-is-large-in-the-central-limit-theorem]
+
+You can read more about the Poisson distribution at this link. [https://en.wikipedia.org/wiki/Poisson_distribution]
+
+Key points
+The sample size required for the Central Limit Theorem and Law of Large Numbers to apply differs based on the probability of success.
+If the probability of success is high, then relatively few observations are needed.
+As the probability of success decreases, more observations are needed.
+If the probability of success is extremely low, such as winning a lottery, then the Central Limit Theorem may not apply even with extremely large sample sizes. The normal distribution is not a good approximation in these cases, and other distributions such as the Poisson distribution (not discussed in these courses) may be more appropriate.
+
+
+## Datacamp exercise
+# Exercise 1. American Roulette probability of winning money
+The exercises in the previous chapter explored winnings in American roulette. In this chapter of exercises, we will continue with the roulette example and add in the Central Limit Theorem.
+In the previous chapter of exercises, you created a random variable S that is the sum of your winnings after betting on green a number of times in American Roulette.
+What is the probability that you end up winning money if you bet on green 100 times?
+# Assign a variable `p_green` as the probability of the ball landing in a green pocket
+p_green <- 2 / 38
+
+# Assign a variable `p_not_green` as the probability of the ball not landing in a green pocket
+p_not_green <- 1-p_green
+
+# Define the number of bets using the variable 'n'
+n <- 100
+
+# Calculate 'avg', the expected outcome of 100 spins if you win $17 when the ball lands on green and you lose $1 when the ball doesn't land on green
+avg <- n * (17*p_green + -1*p_not_green)
+
+# Compute 'se', the standard error of the sum of 100 outcomes
+se <- sqrt(n) * (17 - -1)*sqrt(p_green*p_not_green)
+
+# Using the expected value 'avg' and standard error 'se', compute the probability that you win money betting on green 100 times.
+# Use pnorm to compute the probability of losing money (earning less than $0). Then, subtract this value from 1 to determine the probability of winning money.
+1 - pnorm(0, avg, se)
+
+

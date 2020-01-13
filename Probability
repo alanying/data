@@ -1281,6 +1281,97 @@ mean(Y)
 
 ## Exercise 7. American Roulette per bet standard error
 What is the standard error of Y, the average result of 10,000 spins?
+# Define the number of bets using the variable 'n'
+n <- 10000
+
+# Assign a variable `p_green` as the probability of the ball landing in a green pocket
+p_green <- 2 / 38
+
+# Assign a variable `p_not_green` as the probability of the ball not landing in a green pocket
+p_not_green <- 1 - p_green
+
+# Compute the standard error of 'Y', the mean outcome per bet from 10,000 bets.
+# Please note:
+#   The standard error of the sum of  N  draws is:
+#     SE(S)=√N−−*∣b−a∣*√p(1−p)−−−−−−
+#   The standard error of the mean of  N  draws is:
+#     SE(X¯)=∣b−a∣*√p(1−p)−−−−−−−/√N−−
+a <- 17
+b <- -1
+abs((b-a)*(sqrt(p_green*p_not_green)/sqrt(n)))
+
+
+## Exercise 8. American Roulette winnings per game are positive
+What is the probability that your winnings are positive after betting on green 10,000 times?
+# We defined the average using the following code
+avg <- 17*p_green + -1*p_not_green
+
+# We defined standard error using this equation
+se <- 1/sqrt(n) * (17 - -1)*sqrt(p_green*p_not_green)
+
+# Given this average and standard error, determine the probability of winning more than $0. Print the result to the console.
+1 - pnorm(0, avg, se)
+
+
+## Exercise 9. American Roulette Monte Carlo again
+Create a Monte Carlo simulation that generates 10,000 outcomes of S, the average outcome from 10,000 bets on green.
+Compute the average and standard deviation of the resulting list to confirm the results from previous exercises using the Central Limit Theorem.
+
+## Make sure you fully follow instructions, including printing values to the console and correctly running the `replicate` loop. If not, you may encounter "Session Expired" errors.
+
+# The variable `n` specifies the number of independent bets on green
+n <- 10000
+
+# The variable `B` specifies the number of times we want the simulation to run
+B <- 10000
+
+# Use the `set.seed` function to make sure your answer matches the expected result after random number generation
+set.seed(1)
+
+# Generate a vector `S` that contains the the average outcomes of 10,000 bets modeled 10,000 times
+S <- replicate(B, {
+  outcome <- sample(c(17, -1), n, replace = TRUE, prob = c(1/19, 18/19))
+  mean(outcome)
+})
+
+
+# Compute the average of `S`
+mean(S)
+
+# Compute the standard deviation of `S`
+sd(S)
+
+
+## Exercise 10. American Roulette comparison
+In a previous exercise, you found the probability of winning more than $0 after betting on green 10,000 times using the Central Limit Theorem. Then, you used a Monte Carlo simulation to model the average result of betting on green 10,000 times over 10,000 simulated series of bets.
+What is the probability of winning more than $0 as estimated by your Monte Carlo simulation? The code to generate the vector S that contains the the average outcomes of 10,000 bets modeled 10,000 times has already been run for you.
+# Compute the proportion of outcomes in the vector 'S' where you won more than $0
+mean(S>0)
+
+
+## Exercise 11. American Roulette comparison analysis
+The Monte Carlo result and the CLT approximation are now much closer than when we calculated the probability of winning for 100 bets on green. What could account for this difference?
+
+The CLT works better when the sample size is larger.
+
+
+########################################################################################################################
+skipping 3.3 Assessment: Random Variables, Sampling Models, and the Central Limit Theorem 
+########################################################################################################################
+
+##############################
+## Section 4: The Big Short ##
+##############################
+Section 4 introduces you to the Big Short.
+
+After completing Section 4, you will:
+
+understand the relationship between sampling models and interest rates as determined by banks.
+understand how interest rates can be set to minimize the chances of the bank losing money.
+understand how inappropriate assumptions of independence contributed to the financial meltdown of 2007.
+
+This section corresponds to this section in the course textbook. 
+[https://rafalab.github.io/dsbook/random-variables.html#case-study-the-big-short]
 
 
 
